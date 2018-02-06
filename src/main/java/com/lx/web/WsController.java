@@ -4,8 +4,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import com.lx.model.WiselyMessage;
-import com.lx.model.WiselyResponse;
+import com.lx.domain.WiselyMessage;
+import com.lx.domain.WiselyResponse;
 
 @Controller
 public class WsController {

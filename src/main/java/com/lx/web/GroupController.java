@@ -11,30 +11,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lx.domain.Group;
 import com.lx.domain.HttpResult;
 import com.lx.domain.HttpResultEnum;
 import com.lx.domain.PageInfo;
-import com.lx.domain.User;
-import com.lx.service.UserService;
+import com.lx.service.GroupService;
 import com.lx.web.base.BaseController;
 
 /**
- * 用户信息Controller
+ * 群组Controller
  * 
  * @author wufuxing
  * @version 2018-02-06
  */
 @RestController
-@RequestMapping(value = "/user")
-public class UserController extends BaseController {
+@RequestMapping(value = "/group")
+public class GroupController extends BaseController {
 
   @Autowired
-  private UserService tUserService;
+  private GroupService groupService;
 
   @RequestMapping(value = "info")
-  public HttpResult<?> get(User tUser) {
+  public HttpResult<?> get(Group group) {
     try {
-      User entity = tUserService.getInfo(tUser);
+      Group entity = groupService.getInfo(group);
       return HttpResult.newSuccessResult(entity);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -43,9 +43,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = {"pageList", ""})
-  public HttpResult<?> pageList(User tUser, HttpServletRequest request, HttpServletResponse response) {
+  public HttpResult<?> pageList(Group group, HttpServletRequest request,
+      HttpServletResponse response) {
     try {
-      PageInfo<User> page = tUserService.findPage(new PageInfo<User>(request, response), tUser);
+      PageInfo<Group> page = groupService.findPage(new PageInfo<Group>(request, response), group);
       return HttpResult.newSuccessResult(page);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -54,9 +55,9 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = {"list", ""})
-  public HttpResult<?> list(User tUser) {
+  public HttpResult<?> list(Group group) {
     try {
-      List<User> res = tUserService.findList(tUser);
+      List<Group> res = groupService.findList(group);
       return HttpResult.newSuccessResult(res);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -65,10 +66,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "save")
-  public HttpResult<?> save(User tUser) {
+  public HttpResult<?> save(Group group) {
     try {
-      tUserService.save(tUser);
-      return HttpResult.newSuccessResult(tUser.getId());
+      groupService.save(group);
+      return HttpResult.newSuccessResult(group.getId());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return HttpResult.newErrorResult(HttpResultEnum.Failed);
@@ -76,10 +77,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "delete")
-  public HttpResult<?> delete(User tUser) {
+  public HttpResult<?> delete(Group group) {
     try {
-      tUserService.delete(tUser);
-      return HttpResult.newSuccessResult(tUser.getId());
+      groupService.delete(group);
+      return HttpResult.newSuccessResult(group.getId());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return HttpResult.newErrorResult(HttpResultEnum.Failed);
@@ -93,7 +94,7 @@ public class UserController extends BaseController {
         logger.error("请选择数据!");
         return HttpResult.newErrorResult(HttpResultEnum.Failed);
       }
-      tUserService.deleteBatch(idList);
+      groupService.deleteBatch(idList);
       return HttpResult.successResult();
     } catch (Exception e) {
       logger.error(e.getMessage(), e);

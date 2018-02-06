@@ -1,4 +1,4 @@
-package com.lx.model;
+package com.lx.domain;
 
 public class WiselyResponse {
   private String responseMessage;

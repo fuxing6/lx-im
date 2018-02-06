@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.dao.GroupUserDao">
+    
+	<sql id="groupUserColumns">
+		a.group_id AS "groupId",
+		a.user_id AS "userId"
+	</sql>
+	
+	<sql id="groupUserJoins">
+	</sql>
+    
+	<select id="get" resultType="GroupUser">
+		SELECT 
+			<include refid="groupUserColumns"/>
+		FROM t_group_user a
+		<include refid="groupUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GroupUser">
+		SELECT 
+			<include refid="groupUserColumns"/>
+		FROM t_group_user a
+		<include refid="groupUserJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GroupUser">
+		SELECT 
+			<include refid="groupUserColumns"/>
+		FROM t_group_user a
+		<include refid="groupUserJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_group_user(
+			group_id,
+			user_id
+		) VALUES (
+			#{groupId},
+			#{userId}
+		)
+	</insert>
+	
+	<insert id="insertBatch">
+		INSERT INTO t_group_user(
+			group_id,
+			user_id
+		)
+		values 
+		
+	<foreach collection="list" item="e" index="index" separator=" ,">
+	   (
+								#{e.groupId},
+					#{e.userId}
+		)
+	</foreach>
+	
+	</insert>
+	
+	<update id="update">
+		UPDATE t_group_user SET 	
+			group_id = #{groupId},
+			user_id = #{userId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateNotNull">
+		UPDATE t_group_user SET 	
+						<if test="group_id!=null">
+						group_id = #{groupId},
+						</if>
+						<if test="user_id!=null">
+						user_id = #{userId},
+						</if>
+		update_by =#{updateBy.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM t_group_user
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteBatch">
+		DELETE FROM t_group_user
+		WHERE id in 
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			 #{id}
+		</foreach>
+	</update>
+</mapper>

@@ -5,27 +5,27 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.lx.dao.base.CrudDao;
-import com.lx.domain.User;
+import com.lx.domain.Message;
 
 /**
- * 用户信息DAO接口
+ * 消息内容DAO接口
  * 
  * @author wufuxing
  * @version 2018-02-06
  */
 @Mapper
-public interface UserDao extends CrudDao<User> {
+public interface MessageDao extends CrudDao<Message> {
   /**
    * @author wufuxing 更新非空字段
-   * @param tUser
+   * @param message
    */
-  public void updateNotNull(User tUser);
+  public void updateNotNull(Message message);
 
   /**
    * @author wufuxing 批量插入
-   * @param tUser
+   * @param message
    */
-  public void insertBatch(List<User> tUserList);
+  public void insertBatch(List<Message> messageList);
 
   /**
    * @author wufuxing 批量删除

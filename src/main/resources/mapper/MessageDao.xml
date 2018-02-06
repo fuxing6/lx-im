@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lx.dao.UserDao">
+<mapper namespace="com.lx.dao.MessageDao">
     
-	<sql id="userColumns">
+	<sql id="messageColumns">
 		a.id AS "id",
-		a.name AS "name",
-		a.image AS "image",
-		a.no AS "no",
-		a.status AS "status",
+		a.sender AS "sender",
 		a.create_time AS "createTime",
-		a.update_time AS "updateTime",
+		a.cotent AS "cotent",
+		a.content_type AS "contentType",
+		a.group_id AS "groupId",
 		a.del_flag AS "delFlag"
 	</sql>
 	
-	<sql id="userJoins">
+	<sql id="messageJoins">
 	</sql>
     
-	<select id="get" resultType="User">
+	<select id="get" resultType="Message">
 		SELECT 
-			<include refid="userColumns"/>
-		FROM t_user a
-		<include refid="userJoins"/>
+			<include refid="messageColumns"/>
+		FROM t_message a
+		<include refid="messageJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="User">
+	<select id="findList" resultType="Message">
 		SELECT 
-			<include refid="userColumns"/>
-		FROM t_user a
-		<include refid="userJoins"/>
+			<include refid="messageColumns"/>
+		FROM t_message a
+		<include refid="messageJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="name != null and name != ''">
-				AND a.name LIKE concat('%',#{name},'%')
-			</if>
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -44,11 +40,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="User">
+	<select id="findAllList" resultType="Message">
 		SELECT 
-			<include refid="userColumns"/>
-		FROM t_user a
-		<include refid="userJoins"/>
+			<include refid="messageColumns"/>
+		FROM t_message a
+		<include refid="messageJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -62,36 +58,33 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO t_user(
+		INSERT INTO t_message(
 			id,
-			name,
-			image,
-			no,
-			status,
+			sender,
 			create_time,
-			update_time,
+			cotent,
+			content_type,
+			group_id,
 			del_flag
 		) VALUES (
 			#{id},
-			#{name},
-			#{image},
-			#{no},
-			#{status},
+			#{sender},
 			#{createTime},
-			#{updateTime},
+			#{cotent},
+			#{contentType},
+			#{groupId},
 			#{delFlag}
 		)
 	</insert>
 	
 	<insert id="insertBatch">
-		INSERT INTO t_user(
+		INSERT INTO t_message(
 			id,
-			name,
-			image,
-			no,
-			status,
+			sender,
 			create_time,
-			update_time,
+			cotent,
+			content_type,
+			group_id,
 			del_flag
 		)
 		values 
@@ -99,12 +92,11 @@
 	<foreach collection="list" item="e" index="index" separator=" ,">
 	   (
 								#{e.id},
-					#{e.name},
-					#{e.image},
-					#{e.no},
-					#{e.status},
+					#{e.sender},
 					#{e.createTime},
-					#{e.updateTime},
+					#{e.cotent},
+					#{e.contentType},
+					#{e.groupId},
 					#{e.delFlag}
 		)
 	</foreach>
@@ -112,42 +104,44 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE t_user SET 	
-			name = #{name},
-			image = #{image},
-			no = #{no},
-			status = #{status},
+		UPDATE t_message SET 	
+			sender = #{sender},
 			create_time = #{createTime},
-			update_time = #{updateTime}
+			cotent = #{cotent},
+			content_type = #{contentType},
+			group_id = #{groupId}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="updateNotNull">
-		UPDATE t_user SET 	
-						<if test="name!=null">
-						name = #{name},
+		UPDATE t_message SET 	
+						<if test="sender!=null">
+						sender = #{sender},
 						</if>
-						<if test="image!=null">
-						image = #{image},
+						<if test="create_time!=null">
+						create_time = #{createTime},
 						</if>
-						<if test="no!=null">
-						no = #{no},
+						<if test="cotent!=null">
+						cotent = #{cotent},
 						</if>
-						<if test="status!=null">
-						status = #{status},
+						<if test="content_type!=null">
+						content_type = #{contentType},
 						</if>
-						update_time = #{updateTime}
+						<if test="group_id!=null">
+						group_id = #{groupId},
+						</if>
+		update_by =#{updateBy.id}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE t_user SET 
+		UPDATE t_message SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="deleteBatch">
-		UPDATE t_user SET 
+		UPDATE t_message SET 
 			del_flag = '1'
 		WHERE id in 
 		<foreach collection="list" item="id" open="(" close=")" separator=",">

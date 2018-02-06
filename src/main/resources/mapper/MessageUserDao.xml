@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.dao.MessageUserDao">
+    
+	<sql id="messageUserColumns">
+		a.message_id AS "messageId",
+		a.receiver AS "receiver",
+		a.group_id AS "groupId",
+		a.read_flag AS "readFlag",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="messageUserJoins">
+	</sql>
+    
+	<select id="get" resultType="MessageUser">
+		SELECT 
+			<include refid="messageUserColumns"/>
+		FROM t_message_user a
+		<include refid="messageUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MessageUser">
+		SELECT 
+			<include refid="messageUserColumns"/>
+		FROM t_message_user a
+		<include refid="messageUserJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MessageUser">
+		SELECT 
+			<include refid="messageUserColumns"/>
+		FROM t_message_user a
+		<include refid="messageUserJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_message_user(
+			message_id,
+			receiver,
+			group_id,
+			read_flag,
+			del_flag
+		) VALUES (
+			#{messageId},
+			#{receiver},
+			#{groupId},
+			#{readFlag},
+			#{delFlag}
+		)
+	</insert>
+	
+	<insert id="insertBatch">
+		INSERT INTO t_message_user(
+			message_id,
+			receiver,
+			group_id,
+			read_flag,
+			del_flag
+		)
+		values 
+		
+	<foreach collection="list" item="e" index="index" separator=" ,">
+	   (
+								#{e.messageId},
+					#{e.receiver},
+					#{e.groupId},
+					#{e.readFlag},
+					#{e.delFlag}
+		)
+	</foreach>
+	
+	</insert>
+	
+	<update id="update">
+		UPDATE t_message_user SET 	
+			message_id = #{messageId},
+			receiver = #{receiver},
+			group_id = #{groupId},
+			read_flag = #{readFlag}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateNotNull">
+		UPDATE t_message_user SET 	
+						<if test="message_id!=null">
+						message_id = #{messageId},
+						</if>
+						<if test="receiver!=null">
+						receiver = #{receiver},
+						</if>
+						<if test="group_id!=null">
+						group_id = #{groupId},
+						</if>
+						<if test="read_flag!=null">
+						read_flag = #{readFlag},
+						</if>
+		update_by =#{updateBy.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_message_user SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteBatch">
+		UPDATE t_message_user SET 
+			del_flag = '1'
+		WHERE id in 
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			 #{id}
+		</foreach>
+	</update>
+</mapper>

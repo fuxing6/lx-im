@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.dao.FriendsDao">
+    
+	<sql id="friendsColumns">
+		a.user_id AS "userId",
+		a.friend_id AS "friendId",
+		a.update_time AS "updateTime",
+		a.type AS "type"
+	</sql>
+	
+	<sql id="friendsJoins">
+	</sql>
+    
+	<select id="get" resultType="Friends">
+		SELECT 
+			<include refid="friendsColumns"/>
+		FROM t_friends a
+		<include refid="friendsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Friends">
+		SELECT 
+			<include refid="friendsColumns"/>
+		FROM t_friends a
+		<include refid="friendsJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Friends">
+		SELECT 
+			<include refid="friendsColumns"/>
+		FROM t_friends a
+		<include refid="friendsJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_friends(
+			user_id,
+			friend_id,
+			update_time,
+			type
+		) VALUES (
+			#{userId},
+			#{friendId},
+			#{updateTime},
+			#{type}
+		)
+	</insert>
+	
+	<insert id="insertBatch">
+		INSERT INTO t_friends(
+			user_id,
+			friend_id,
+			update_time,
+			type
+		)
+		values 
+		
+	<foreach collection="list" item="e" index="index" separator=" ,">
+	   (
+								#{e.userId},
+					#{e.friendId},
+					#{e.updateTime},
+					#{e.type}
+		)
+	</foreach>
+	
+	</insert>
+	
+	<update id="update">
+		UPDATE t_friends SET 	
+			user_id = #{userId},
+			friend_id = #{friendId},
+			update_time = #{updateTime},
+			type = #{type}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateNotNull">
+		UPDATE t_friends SET 	
+						<if test="user_id!=null">
+						user_id = #{userId},
+						</if>
+						<if test="friend_id!=null">
+						friend_id = #{friendId},
+						</if>
+						<if test="update_time!=null">
+						update_time = #{updateTime},
+						</if>
+						<if test="type!=null">
+						type = #{type},
+						</if>
+		update_by =#{updateBy.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM t_friends
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteBatch">
+		DELETE FROM t_friends
+		WHERE id in 
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			 #{id}
+		</foreach>
+	</update>
+</mapper>

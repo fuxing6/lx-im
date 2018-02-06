@@ -13,28 +13,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lx.domain.HttpResult;
 import com.lx.domain.HttpResultEnum;
+import com.lx.domain.MessageUser;
 import com.lx.domain.PageInfo;
-import com.lx.domain.User;
-import com.lx.service.UserService;
+import com.lx.service.MessageUserService;
 import com.lx.web.base.BaseController;
 
 /**
- * 用户信息Controller
+ * 消息接收人Controller
  * 
  * @author wufuxing
  * @version 2018-02-06
  */
 @RestController
-@RequestMapping(value = "/user")
-public class UserController extends BaseController {
+@RequestMapping(value = "/messageUser")
+public class MessageUserController extends BaseController {
 
   @Autowired
-  private UserService tUserService;
+  private MessageUserService messageUserService;
 
   @RequestMapping(value = "info")
-  public HttpResult<?> get(User tUser) {
+  public HttpResult<?> get(MessageUser messageUser) {
     try {
-      User entity = tUserService.getInfo(tUser);
+      MessageUser entity = messageUserService.getInfo(messageUser);
       return HttpResult.newSuccessResult(entity);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -43,9 +43,11 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = {"pageList", ""})
-  public HttpResult<?> pageList(User tUser, HttpServletRequest request, HttpServletResponse response) {
+  public HttpResult<?> pageList(MessageUser messageUser, HttpServletRequest request,
+      HttpServletResponse response) {
     try {
-      PageInfo<User> page = tUserService.findPage(new PageInfo<User>(request, response), tUser);
+      PageInfo<MessageUser> page =
+          messageUserService.findPage(new PageInfo<MessageUser>(request, response), messageUser);
       return HttpResult.newSuccessResult(page);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -54,9 +56,9 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = {"list", ""})
-  public HttpResult<?> list(User tUser) {
+  public HttpResult<?> list(MessageUser messageUser) {
     try {
-      List<User> res = tUserService.findList(tUser);
+      List<MessageUser> res = messageUserService.findList(messageUser);
       return HttpResult.newSuccessResult(res);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -65,10 +67,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "save")
-  public HttpResult<?> save(User tUser) {
+  public HttpResult<?> save(MessageUser messageUser) {
     try {
-      tUserService.save(tUser);
-      return HttpResult.newSuccessResult(tUser.getId());
+      messageUserService.save(messageUser);
+      return HttpResult.newSuccessResult(messageUser.getId());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return HttpResult.newErrorResult(HttpResultEnum.Failed);
@@ -76,10 +78,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "delete")
-  public HttpResult<?> delete(User tUser) {
+  public HttpResult<?> delete(MessageUser messageUser) {
     try {
-      tUserService.delete(tUser);
-      return HttpResult.newSuccessResult(tUser.getId());
+      messageUserService.delete(messageUser);
+      return HttpResult.newSuccessResult(messageUser.getId());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return HttpResult.newErrorResult(HttpResultEnum.Failed);
@@ -93,7 +95,7 @@ public class UserController extends BaseController {
         logger.error("请选择数据!");
         return HttpResult.newErrorResult(HttpResultEnum.Failed);
       }
-      tUserService.deleteBatch(idList);
+      messageUserService.deleteBatch(idList);
       return HttpResult.successResult();
     } catch (Exception e) {
       logger.error(e.getMessage(), e);

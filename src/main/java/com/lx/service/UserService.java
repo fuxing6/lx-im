@@ -4,40 +4,73 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lx.dao.UserDao;
-import com.lx.model.User;
+import com.lx.domain.PageInfo;
+import com.lx.domain.User;
+import com.lx.service.base.CrudService;
+import com.lx.utils.StringUtils;
 
+/**
+ * 用户信息Service
+ * 
+ * @author wufuxing
+ * @version 2018-02-06
+ */
 @Service
-public class UserService {
-
+@Transactional(readOnly = true)
+public class UserService extends CrudService<UserDao, User> {
   @Autowired
   private UserDao userDao;
 
-  public User getInfo(User user) {
-    if (user == null || StringUtils.isEmpty(user.getId())) {
-      return null;
+  public List<User> findList(User tUser) {
+    return super.findList(tUser);
+  }
+
+  public PageInfo<User> findPage(PageInfo<User> page, User tUser) {
+    return super.findPage(page, tUser);
+  }
+
+  @Transactional(readOnly = false)
+  public void save(User tUser) {
+    super.save(tUser);
+  }
+
+  @Transactional(readOnly = false)
+  public void delete(User tUser) {
+    super.delete(tUser);
+  }
+
+  @Transactional(readOnly = false)
+  public void deleteBatch(List<String> idList) {
+    userDao.deleteBatch(idList);
+  }
+
+  @Transactional(readOnly = false)
+  public void insertBatch(List<User> tUserList) {
+    userDao.insertBatch(tUserList);
+  }
+
+  @Transactional(readOnly = false)
+  public void updateNotNull(User tUser) throws Exception {
+    tUser.preUpdate();
+    userDao.updateNotNull(tUser);
+  }
+
+  public User getInfo(User tUser) {
+    User entity = null;
+    if (StringUtils.isNotBlank(tUser.getId())) {
+      entity = get(tUser);
     }
-    return userDao.getInfo(user);
-  }
-
-  public List<User> getAll(User user) {
-    return userDao.queryAll();
-  }
-
-  public void save(User user) {
-    if (user == null || StringUtils.isEmpty(user.getId())) {
-      return;
+    if (entity == null) {
+      entity = new User();
     }
-    userDao.insert(user);
+    return entity;
   }
 
-  public void update(User user) {
-    if (user == null || StringUtils.isEmpty(user.getId())) {
-      return;
-    }
-    userDao.update(user);
+  @Override
+  protected UserDao dao() {
+    return userDao;
   }
-
 }

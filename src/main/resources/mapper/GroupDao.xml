@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lx.dao.UserDao">
+<mapper namespace="com.lx.dao.GroupDao">
     
-	<sql id="userColumns">
+	<sql id="groupColumns">
 		a.id AS "id",
+		a.create_user AS "createUser",
 		a.name AS "name",
-		a.image AS "image",
-		a.no AS "no",
-		a.status AS "status",
 		a.create_time AS "createTime",
 		a.update_time AS "updateTime",
 		a.del_flag AS "delFlag"
 	</sql>
 	
-	<sql id="userJoins">
+	<sql id="groupJoins">
 	</sql>
     
-	<select id="get" resultType="User">
+	<select id="get" resultType="Group">
 		SELECT 
-			<include refid="userColumns"/>
-		FROM t_user a
-		<include refid="userJoins"/>
+			<include refid="groupColumns"/>
+		FROM t_group a
+		<include refid="groupJoins"/>
 		WHERE a.id = #{id}
 	</select>
 	
-	<select id="findList" resultType="User">
+	<select id="findList" resultType="Group">
 		SELECT 
-			<include refid="userColumns"/>
-		FROM t_user a
-		<include refid="userJoins"/>
+			<include refid="groupColumns"/>
+		FROM t_group a
+		<include refid="groupJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
-				AND a.name LIKE concat('%',#{name},'%')
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
 			</if>
 		</where>
 		<choose>
@@ -44,11 +45,11 @@
 		</choose>
 	</select>
 	
-	<select id="findAllList" resultType="User">
+	<select id="findAllList" resultType="Group">
 		SELECT 
-			<include refid="userColumns"/>
-		FROM t_user a
-		<include refid="userJoins"/>
+			<include refid="groupColumns"/>
+		FROM t_group a
+		<include refid="groupJoins"/>
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		</where>		
@@ -62,21 +63,17 @@
 	</select>
 	
 	<insert id="insert">
-		INSERT INTO t_user(
+		INSERT INTO t_group(
 			id,
+			create_user,
 			name,
-			image,
-			no,
-			status,
 			create_time,
 			update_time,
 			del_flag
 		) VALUES (
 			#{id},
+			#{createUser},
 			#{name},
-			#{image},
-			#{no},
-			#{status},
 			#{createTime},
 			#{updateTime},
 			#{delFlag}
@@ -84,12 +81,10 @@
 	</insert>
 	
 	<insert id="insertBatch">
-		INSERT INTO t_user(
+		INSERT INTO t_group(
 			id,
+			create_user,
 			name,
-			image,
-			no,
-			status,
 			create_time,
 			update_time,
 			del_flag
@@ -99,10 +94,8 @@
 	<foreach collection="list" item="e" index="index" separator=" ,">
 	   (
 								#{e.id},
+					#{e.createUser},
 					#{e.name},
-					#{e.image},
-					#{e.no},
-					#{e.status},
 					#{e.createTime},
 					#{e.updateTime},
 					#{e.delFlag}
@@ -112,42 +105,40 @@
 	</insert>
 	
 	<update id="update">
-		UPDATE t_user SET 	
+		UPDATE t_group SET 	
+			create_user = #{createUser},
 			name = #{name},
-			image = #{image},
-			no = #{no},
-			status = #{status},
 			create_time = #{createTime},
 			update_time = #{updateTime}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="updateNotNull">
-		UPDATE t_user SET 	
+		UPDATE t_group SET 	
+						<if test="create_user!=null">
+						create_user = #{createUser},
+						</if>
 						<if test="name!=null">
 						name = #{name},
 						</if>
-						<if test="image!=null">
-						image = #{image},
+						<if test="create_time!=null">
+						create_time = #{createTime},
 						</if>
-						<if test="no!=null">
-						no = #{no},
+						<if test="update_time!=null">
+						update_time = #{updateTime},
 						</if>
-						<if test="status!=null">
-						status = #{status},
-						</if>
-						update_time = #{updateTime}
+		update_by =#{updateBy.id}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="delete">
-		UPDATE t_user SET 
+		UPDATE t_group SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
 	</update>
 	
 	<update id="deleteBatch">
-		UPDATE t_user SET 
+		UPDATE t_group SET 
 			del_flag = '1'
 		WHERE id in 
 		<foreach collection="list" item="id" open="(" close=")" separator=",">

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="3 seconds" debug="false">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+    <jmxConfigurator/>
+    <!-- 
+        appender是<configuration>的子节点，是负责写日志的组件
+        两个必要属性name和class:name指定appender名称，class指定appender的全限定名
+        定义控制台appender 作用:把日志输出到控制台 class="ch.qos.logback.core.ConsoleAppender" 
+    -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 对日志进行格式化 -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSS}","thread":"%t","line":"%line","log_level":"%p","class_name":"%C;","msg":"%m"}\n
+            </pattern>
+        </layout>
+    </appender>
+    
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 如果是true日志被追加到文件结尾，如果是false清空现存文件，默认是true -->
+        <append>true</append>
+        <File>/home/local/task/console.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 每天滚动一次的日志 只保留30天内的日志文件 -->
+            <FileNamePattern>
+                /home/local/task/console.%d{yyyy-MM-dd}.log.zip
+                <maxHistory>30</maxHistory> 
+            </FileNamePattern>
+        </rollingPolicy>
+        <!-- 对日志进行格式化 -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSS}","thread":"%t","line":"%line","log_level":"%p","class_name":"%C;","msg":"%m"}\n
+            </Pattern>
+        </layout>
+    </appender>
+    
+     <!--
+        定义滚动记录文件appender 作用:滚动记录文件,先将日志记录到指定文件,当符合某个条件时,将日志记录到其他文件 
+        RollingFileAppender class="ch.qos.logback.core.rolling.RollingFileAppender"
+        参数： 
+            <append>:如果是true日志被追加到文件结尾，如果是false清空现存文件,默认是true
+            <file>:被写入的文件名，可以是相对目录也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值
+            <rollingPolicy>:当发生滚动时，决定RollingFileAppender的行为，涉及文件移动和重命名
+            <triggeringPolicy>:告知RollingFileAppender合适激活滚动
+            <prudent>:当为true时不支持FixedWindowRollingPolicy支持TimeBasedRollingPolicy，但是有两个限制:1不支持也不允许文件压缩,2不能设置file属性必须留空
+     -->
+    <appender name="LOGBACK_ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append>
+        <file>/home/local/task/console-error.log</file>
+
+        <!--
+            定义滚动策略 作用:根据固定窗口算法重命名文件的滚动策略 class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy
+            <fileNamePattern>:表示当触发了回滚策略后，按这个文件命名规则生成归档文件，命名规则中的%i表示在maxIndex和minIndex之间的一个整数值
+            <minIndex>:最小索引值
+            <maxIndex>:最大索引值
+         -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>/home/local/task/console-error.log.%i</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>20</maxIndex>
+        </rollingPolicy>
+
+        <!-- 
+            定义按文件大小触发滚动策略triggeringPolicy 作用:查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动
+            只有一个参数 maxSize 这是活动文件的大小，默认值是10MB
+        -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50MB</maxFileSize>
+        </triggeringPolicy>
+
+        <!-- 
+            配置日志级别过滤器 作用:根据日志级别进行过滤，如果日志级别等于配置级别过滤器会根据onMath和onMismatch接收或拒绝日志
+            参数:
+                <level>:设置过滤级别
+                <onMatch>:用于配置符合过滤条件的操作
+                <onMismatch>:用于配置不符合过滤条件的操作
+                此处配置为只接收ERROR日志级别信息
+        -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>
+                {"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSS}","thread":"%t","line":"%line","log_level":"%p","class_name":"%C;","msg":"%m%n", "caller":"%caller{1}"}
+            </pattern>
+        </encoder>
+    </appender>
+    
+    <logger name="com.fwyun.io" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="LOGBACK_ERROR_LOG" />
+    </logger>
+    <logger name="com.lx" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="LOGBACK_ERROR_LOG" />
+    </logger>
+    <logger name="org.apache.ibatis" level="DEBUG">
+    <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.springframework" level="error">
+    <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.springframework.jdbc.datasource" level="debug">
+    <appender-ref ref="STDOUT" />
+    </logger>
+<!--     <logger name="com.netflix.discovery" level="DEBUG"> -->
+<!--         <appender-ref ref="FILE" /> -->
+<!--         <appender-ref ref="LOGBACK_ERROR_LOG" /> -->
+<!--     </logger> -->
+
+    <!-- 将root的打印级别设置为"INFO",指定了名字为"FILE","STDOUT"的appender -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

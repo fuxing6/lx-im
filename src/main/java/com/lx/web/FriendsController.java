@@ -11,30 +11,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lx.domain.Friends;
 import com.lx.domain.HttpResult;
 import com.lx.domain.HttpResultEnum;
 import com.lx.domain.PageInfo;
-import com.lx.domain.User;
-import com.lx.service.UserService;
+import com.lx.service.FriendsService;
 import com.lx.web.base.BaseController;
 
 /**
- * 用户信息Controller
+ * 最近联系人Controller
  * 
  * @author wufuxing
  * @version 2018-02-06
  */
 @RestController
-@RequestMapping(value = "/user")
-public class UserController extends BaseController {
+@RequestMapping(value = "/friends")
+public class FriendsController extends BaseController {
 
   @Autowired
-  private UserService tUserService;
+  private FriendsService friendsService;
 
   @RequestMapping(value = "info")
-  public HttpResult<?> get(User tUser) {
+  public HttpResult<?> get(Friends friends) {
     try {
-      User entity = tUserService.getInfo(tUser);
+      Friends entity = friendsService.getInfo(friends);
       return HttpResult.newSuccessResult(entity);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -43,9 +43,11 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = {"pageList", ""})
-  public HttpResult<?> pageList(User tUser, HttpServletRequest request, HttpServletResponse response) {
+  public HttpResult<?> pageList(Friends friends, HttpServletRequest request,
+      HttpServletResponse response) {
     try {
-      PageInfo<User> page = tUserService.findPage(new PageInfo<User>(request, response), tUser);
+      PageInfo<Friends> page =
+          friendsService.findPage(new PageInfo<Friends>(request, response), friends);
       return HttpResult.newSuccessResult(page);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -54,9 +56,9 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = {"list", ""})
-  public HttpResult<?> list(User tUser) {
+  public HttpResult<?> list(Friends friends) {
     try {
-      List<User> res = tUserService.findList(tUser);
+      List<Friends> res = friendsService.findList(friends);
       return HttpResult.newSuccessResult(res);
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -65,10 +67,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "save")
-  public HttpResult<?> save(User tUser) {
+  public HttpResult<?> save(Friends friends) {
     try {
-      tUserService.save(tUser);
-      return HttpResult.newSuccessResult(tUser.getId());
+      friendsService.save(friends);
+      return HttpResult.newSuccessResult(friends.getId());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return HttpResult.newErrorResult(HttpResultEnum.Failed);
@@ -76,10 +78,10 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "delete")
-  public HttpResult<?> delete(User tUser) {
+  public HttpResult<?> delete(Friends friends) {
     try {
-      tUserService.delete(tUser);
-      return HttpResult.newSuccessResult(tUser.getId());
+      friendsService.delete(friends);
+      return HttpResult.newSuccessResult(friends.getId());
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
       return HttpResult.newErrorResult(HttpResultEnum.Failed);
@@ -93,7 +95,7 @@ public class UserController extends BaseController {
         logger.error("请选择数据!");
         return HttpResult.newErrorResult(HttpResultEnum.Failed);
       }
-      tUserService.deleteBatch(idList);
+      friendsService.deleteBatch(idList);
       return HttpResult.successResult();
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
