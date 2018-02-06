@@ -1,10 +1,6 @@
 package com.lx.domain;
 
-import java.util.Date;
-
 import org.hibernate.validator.constraints.Length;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 最近联系人Entity
@@ -17,7 +13,6 @@ public class Friends extends DataEntity<Friends> {
   private static final long serialVersionUID = 1L;
   private String userId; // user_id
   private String friendId; // friend_id
-  private Date updateTime; // update_time
   private String type; // 个人消息,群组消息
 
 
@@ -37,15 +32,6 @@ public class Friends extends DataEntity<Friends> {
 
   public void setFriendId(String friendId) {
     this.friendId = friendId;
-  }
-
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  public Date getUpdateTime() {
-    return updateTime;
-  }
-
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
   }
 
   @Length(min = 0, max = 10, message = "个人消息,群组消息长度必须介于 0 和 10 之间")

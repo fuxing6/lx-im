@@ -1,10 +1,6 @@
 package com.lx.domain;
 
-import java.util.Date;
-
 import org.hibernate.validator.constraints.Length;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 用户信息Entity
@@ -19,8 +15,6 @@ public class User extends DataEntity<User> {
   private String image; // image
   private String no; // no
   private String status; // status
-  private Date createTime; // create_time
-  private Date updateTime; // update_time
 
 
   @Length(min = 0, max = 200, message = "name长度必须介于 0 和 200 之间")
@@ -57,24 +51,6 @@ public class User extends DataEntity<User> {
 
   public void setStatus(String status) {
     this.status = status;
-  }
-
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  public Date getCreateTime() {
-    return createTime;
-  }
-
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
-
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  public Date getUpdateTime() {
-    return updateTime;
-  }
-
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
   }
 
 }

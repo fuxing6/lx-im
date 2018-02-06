@@ -1,10 +1,6 @@
 package com.lx.domain;
 
-import java.util.Date;
-
 import org.hibernate.validator.constraints.Length;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 消息内容Entity
@@ -16,7 +12,6 @@ public class Message extends DataEntity<Message> {
 
   private static final long serialVersionUID = 1L;
   private String sender; // sender
-  private Date createTime; // create_time
   private String cotent; // cotent
   private String contentType; // (链接,图片,附件)
   private String groupId; // group_id
@@ -29,15 +24,6 @@ public class Message extends DataEntity<Message> {
 
   public void setSender(String sender) {
     this.sender = sender;
-  }
-
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  public Date getCreateTime() {
-    return createTime;
-  }
-
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
   }
 
   public String getCotent() {
